@@ -1,6 +1,7 @@
 """
 Visa Photo Checker - Slack Bot
-Watches for photo uploads and posts a simple good/bad verdict with plain-English issues.
+CS agent posts a photo, tags the bot, and it instantly replies good or bad.
+Usage: @Atlys Photo Checker [attached photo]
 """
 
 import os
@@ -108,7 +109,6 @@ def download_image(file_info: dict) -> bytes | None:
 
 
 def check_photo(image_bytes: bytes, mime_type: str) -> tuple[bool, list[str]]:
-    """Returns (is_good, list_of_issues)."""
     b64 = base64.standard_b64encode(image_bytes).decode("utf-8")
     message = anthropic_client.messages.create(
         model="claude-opus-4-5",
@@ -121,38 +121,40 @@ def check_photo(image_bytes: bytes, mime_type: str) -> tuple[bool, list[str]]:
             ],
         }],
     )
-
     text = message.content[0].text.strip()
     is_good = "RESULT: GOOD" in text
-
     issues = []
     if not is_good and "ISSUES:" in text:
         for line in text.split("\n"):
             line = line.strip()
             if line.startswith("- "):
                 issues.append(line[2:])
-
     return is_good, issues
 
 
-@slack_app.event("message")
-def handle_message(event, client):
+@slack_app.event("app_mention")
+def handle_mention(event, client, say):
+    """Fires when someone tags @Atlys Photo Checker in a message with a photo."""
     files = event.get("files", [])
+    channel = event["channel"]
+    thread_ts = event.get("thread_ts") or event["ts"]
+
     if not files:
+        say(
+            text="Please attach a visa photo when mentioning me and I'll check it right away!",
+            thread_ts=thread_ts,
+        )
         return
 
     for file_info in files:
         if not file_info.get("mimetype", "").startswith("image/"):
             continue
 
-        channel = event["channel"]
-        thread_ts = event["ts"]
-
-        # Acknowledge immediately
+        # Post immediate acknowledgement
         placeholder = client.chat_postMessage(
             channel=channel,
             thread_ts=thread_ts,
-            text=":mag: Checking photo…",
+            text=":mag: Checking visa photo…",
         )
 
         try:
@@ -165,14 +167,14 @@ def handle_message(event, client):
             if is_good:
                 text = "✅ *Photo looks good!* This meets visa photo standards."
             else:
-                lines = ["❌ *Photo needs to be retaken.* Please fix the following:"]
+                lines = ["❌ *Photo needs to be retaken.* Please ask the customer to fix the following:"]
                 for issue in issues:
                     lines.append(f"• {issue}")
                 text = "\n".join(lines)
 
             client.chat_update(channel=channel, ts=placeholder["ts"], text=text)
 
-        except Exception as e:
+        except Exception:
             logger.exception("Photo check failed")
             client.chat_update(
                 channel=channel,
@@ -183,16 +185,17 @@ def handle_message(event, client):
 
 @flask_app.route("/slack/events", methods=["POST"])
 def slack_events():
-    # Handle Slack URL verification challenge
     if request.content_type and "application/json" in request.content_type:
         data = request.get_json(silent=True)
         if data and data.get("type") == "url_verification":
             return {"challenge": data["challenge"]}
     return handler.handle(request)
 
+
 @flask_app.route("/health")
 def health():
     return {"status": "ok"}, 200
 
+
 if __name__ == "__main__":
-    flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 3000)))
+    flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
