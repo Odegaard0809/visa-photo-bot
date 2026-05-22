@@ -64,14 +64,15 @@ FACE & HEAD POSITION
 - Full face clearly visible — no obstructions
 - Entire head visible from chin to top of head
 - Head not tilted
-- Head size proportionate within the frame — do not flag minor variations
+- Face must not be too close to the camera — there should be visible space around the head on all sides including above the head and below the chin
+- Flag if the face takes up more than 80% of the frame — it is too close
 - Both sides of the face fully visible
 - Hair must not cover the eyes or face
 
 EYES & EXPRESSION
 - Both eyes open and clearly visible
-- Neutral facial expression
-- Mouth closed — no smiling with teeth visible
+- Neutral facial expression — only flag if clearly smiling with teeth, laughing, or making an exaggerated expression; do NOT flag a relaxed or serious neutral face
+- Mouth closed — only flag if teeth are clearly visible; do NOT flag lips that are gently closed or relaxed
 - No red-eye
 
 LIGHTING
