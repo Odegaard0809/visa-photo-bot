@@ -183,6 +183,11 @@ def handle_message(event, client):
 
 @flask_app.route("/slack/events", methods=["POST"])
 def slack_events():
+    # Handle Slack URL verification challenge
+    if request.content_type and "application/json" in request.content_type:
+        data = request.get_json(silent=True)
+        if data and data.get("type") == "url_verification":
+            return {"challenge": data["challenge"]}
     return handler.handle(request)
 
 @flask_app.route("/health")
