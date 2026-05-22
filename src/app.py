@@ -50,13 +50,13 @@ IMAGE QUALITY
 - No visible filters, heavy editing, or unnatural skin tones
 - Photo must not be folded, torn, scratched, or damaged
 - No selfie-style distortion
-- Correct aspect ratio and cropping with proper spacing around the head
+- Correct aspect ratio and cropping — do not flag minor spacing at the top of the head
 
 BACKGROUND
-- Plain white or light-coloured background only
+- Plain white, off-white, or light-coloured background (cream or light grey is acceptable)
 - No patterns, textures, or objects in the background
 - No other people visible
-- No shadows on the background
+- No obvious shadows on the background (minor shadows are acceptable)
 - Background must be evenly lit with good contrast between subject and background
 
 FACE & HEAD POSITION
@@ -64,7 +64,7 @@ FACE & HEAD POSITION
 - Full face clearly visible — no obstructions
 - Entire head visible from chin to top of head
 - Head not tilted
-- Head size proportionate within the frame
+- Head size proportionate within the frame — do not flag minor variations
 - Both sides of the face fully visible
 - Hair must not cover the eyes or face
 
@@ -76,7 +76,7 @@ EYES & EXPRESSION
 
 LIGHTING
 - Even lighting across the entire face
-- No harsh shadows on the face
+- No harsh or obvious shadows on the face (slight, natural shadows are acceptable)
 - No glare or reflections on the face
 
 GLASSES & HEAD COVERINGS
