@@ -109,7 +109,33 @@ def download_image(file_info: dict) -> bytes | None:
     return resp.content if resp.status_code == 200 else None
 
 
+def compress_image(image_bytes: bytes) -> tuple[bytes, str]:
+    """Compress image to under 4MB for Claude API."""
+    from PIL import Image
+    import io
+    img = Image.open(io.BytesIO(image_bytes))
+    # Convert to RGB if needed (e.g. PNG with transparency)
+    if img.mode in ("RGBA", "P"):
+        img = img.convert("RGB")
+    # Resize if very large
+    max_dim = 1600
+    if max(img.width, img.height) > max_dim:
+        img.thumbnail((max_dim, max_dim), Image.LANCZOS)
+    # Compress to JPEG under 4MB
+    quality = 85
+    while True:
+        buffer = io.BytesIO()
+        img.save(buffer, format="JPEG", quality=quality)
+        if buffer.tell() < 4 * 1024 * 1024 or quality < 30:
+            break
+        quality -= 10
+    return buffer.getvalue(), "image/jpeg"
+
+
 def check_photo(image_bytes: bytes, mime_type: str) -> tuple[bool, list[str]]:
+    # Compress if over 4MB
+    if len(image_bytes) > 4 * 1024 * 1024:
+        image_bytes, mime_type = compress_image(image_bytes)
     b64 = base64.standard_b64encode(image_bytes).decode("utf-8")
     message = anthropic_client.messages.create(
         model="claude-opus-4-5",
