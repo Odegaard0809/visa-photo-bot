@@ -71,7 +71,7 @@ FACE & HEAD POSITION
 
 EYES & EXPRESSION
 - Both eyes open and clearly visible
-- Neutral facial expression — only flag if clearly smiling with teeth, laughing, or making an exaggerated expression; do NOT flag a relaxed or serious neutral face
+- Neutral facial expression — only flag if clearly smiling with teeth, laughing, or making an obviously exaggerated expression; do NOT flag a relaxed, serious, or slightly tense-looking neutral face; most people look serious in photos and that is fine
 - Mouth closed — only flag if teeth are clearly visible; do NOT flag lips that are gently closed or relaxed
 - No red-eye
 
